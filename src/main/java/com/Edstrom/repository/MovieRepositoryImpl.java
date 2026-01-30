@@ -3,6 +3,7 @@ package com.Edstrom.repository;
 import com.Edstrom.entity.Movie;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 
 public class MovieRepositoryImpl implements MovieRepository {
 
@@ -15,7 +16,7 @@ public class MovieRepositoryImpl implements MovieRepository {
 
         try(Session session = sessionFactory.openSession()){
 
-            var tx = session.beginTransaction();
+            Transaction tx = session.beginTransaction();
 
             session.persist(movie);
 

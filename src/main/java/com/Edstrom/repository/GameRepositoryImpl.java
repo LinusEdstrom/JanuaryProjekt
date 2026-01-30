@@ -3,6 +3,7 @@ package com.Edstrom.repository;
 import com.Edstrom.entity.Game;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 
 public class GameRepositoryImpl implements GameRepository {
 
@@ -15,7 +16,7 @@ public class GameRepositoryImpl implements GameRepository {
 
         try(Session session = sessionFactory.openSession()){
 
-            var tx = session.beginTransaction();
+            Transaction tx = session.beginTransaction();
 
             session.persist(game);
 

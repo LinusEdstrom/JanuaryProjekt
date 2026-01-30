@@ -11,8 +11,8 @@ public class MembershipService {
         this.memberRepository = memberRepository;
     }
     public Member createMember(String name, String email) {
-        if (name == null || name.isBlank()) throw new IllegalArgumentException(" please write a name");
-        if (email == null || email.isBlank()) throw new IllegalArgumentException(" please write an email");
+        if (name == null || name.isEmpty()) throw new IllegalArgumentException(" please write a name");
+        if (email == null || email.isEmpty()) throw new IllegalArgumentException(" please write an email");
 
         Member newMember = new Member(name.trim(), email.trim());
         memberRepository.save(newMember);

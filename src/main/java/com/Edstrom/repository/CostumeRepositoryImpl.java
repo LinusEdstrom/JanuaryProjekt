@@ -3,6 +3,7 @@ package com.Edstrom.repository;
 import com.Edstrom.entity.Costume;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 
 public class CostumeRepositoryImpl implements CostumeRepository {
 
@@ -15,7 +16,7 @@ public class CostumeRepositoryImpl implements CostumeRepository {
 
         try(Session session = sessionFactory.openSession()){
 
-            var tx = session.beginTransaction();
+            Transaction tx = session.beginTransaction();
 
             session.persist(costume);
 

@@ -1,8 +1,14 @@
 package com.Edstrom;
 
 import com.Edstrom.entity.Member;
+import com.Edstrom.entity.Rental;
 import com.Edstrom.repository.MemberRepository;
 import com.Edstrom.repository.MemberRepositoryImpl;
+import com.Edstrom.repository.RentalRepository;
+import com.Edstrom.repository.RentalRepositoryImpl;
+import com.Edstrom.service.MembershipService;
+import com.Edstrom.service.RentalService;
+import com.Edstrom.util.HibernateUtil;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -18,12 +24,23 @@ public class Main extends Application {
 
     private SessionFactory sessionFactory;
     private MemberRepository memberRepository;
+    private RentalRepository rentalRepository;
+    private MembershipService membershipService;
+    private RentalService rentalService;
     private ObservableList<Member> members;
 
     @Override
     public void init() {
-        sessionFactory = new Configuration().configure().buildSessionFactory();
+
+        sessionFactory = HibernateUtil.getSessionFactory();
+
+        //Repos
         memberRepository = new MemberRepositoryImpl(sessionFactory);
+        rentalRepository = new RentalRepositoryImpl(sessionFactory);
+
+        //Service
+        membershipService = new MembershipService(memberRepository);
+        rentalService = new RentalService(rentalRepository);
     }
 
     @Override
