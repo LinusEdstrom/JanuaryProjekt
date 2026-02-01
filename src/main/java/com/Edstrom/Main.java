@@ -2,6 +2,8 @@ package com.Edstrom;
 
 import com.Edstrom.entity.Member;
 import com.Edstrom.entity.Rental;
+import com.Edstrom.exception.InvalidEmailException;
+import com.Edstrom.exception.InvalidMemberDataException;
 import com.Edstrom.repository.MemberRepository;
 import com.Edstrom.repository.MemberRepositoryImpl;
 import com.Edstrom.repository.RentalRepository;
@@ -29,6 +31,9 @@ public class Main extends Application {
     private RentalService rentalService;
     private ObservableList<Member> members;
 
+    TextField nameField, emailField;
+    Label messageLabel;
+
     @Override
     public void init() {
 
@@ -41,6 +46,8 @@ public class Main extends Application {
         //Service
         membershipService = new MembershipService(memberRepository);
         rentalService = new RentalService(rentalRepository);
+
+
     }
 
     @Override
@@ -58,31 +65,61 @@ public class Main extends Application {
 
         table.getColumns().addAll(idCol, nameCol, emailCol);
 
+
+        //TODO ska den här till memberRepository eller spelar det ingen roll längre?
+        //TODO fix and trix bruh
         members = FXCollections.observableArrayList(memberRepository.findAll());
         table.setItems(members);
 
-        TextField nameField = new TextField();
+        nameField = new TextField();
         nameField.setPromptText("Name");
 
-        TextField emailField = new TextField();
+        emailField = new TextField();
         emailField.setPromptText("Email");
 
         Button addButton = new Button("Add Member");
-        addButton.setOnAction(e -> {
-            Member member = new Member(nameField.getText(), emailField.getText());
-            memberRepository.save(member);
-            members.setAll(memberRepository.findAll());
-            nameField.clear();
-            emailField.clear();
-        });
+        addButton.setOnAction(e -> addButtonClicked());
 
-        VBox root = new VBox(10, table, new HBox(10, nameField, emailField, addButton));
+        messageLabel = new Label();
+        messageLabel.setStyle("-fx-text-fill: red;");
+
+
+        VBox root = new VBox(10, table, new HBox(10,
+                nameField, emailField, addButton), messageLabel);
         stage.setScene(new Scene(root, 600, 400));
         stage.setTitle("Members");
         stage.show();
     }
+        public void addButtonClicked () {
+            try {
+               Member newMember = membershipService.createMember(
+                        nameField.getText(),
+                        emailField.getText()
+                );
+                members.add(newMember);
 
-    public static void main(String[] args) {
-        launch(args);
+                nameField.clear();
+                emailField.clear();
+                showSuccess("Member " + newMember.getName() + " email " + newMember.getEmail() + " successfully created");
+            } catch (InvalidMemberDataException e) {
+                showError(" Invalid data input for a members name");
+            }catch (InvalidEmailException e) {
+                showError(" Invalid email");
+            }
+        }
+    private void showError(String message) {
+        messageLabel.setStyle("-fx-text-fill: red;");
+        messageLabel.setText(message);
     }
-}
+
+    private void showSuccess(String message) {
+        messageLabel.setStyle("-fx-text-fill: green;");
+        messageLabel.setText(message);
+    }
+
+
+
+    public static void main (String[]args){
+            launch(args);
+        }
+    }
