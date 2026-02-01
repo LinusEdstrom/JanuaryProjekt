@@ -31,6 +31,8 @@ public class Main extends Application {
     private RentalService rentalService;
     private ObservableList<Member> members;
 
+    TableView<Member> memberTable;
+
     TextField nameField, emailField;
     Label messageLabel;
 
@@ -48,11 +50,12 @@ public class Main extends Application {
         rentalService = new RentalService(rentalRepository);
 
 
+
     }
 
     @Override
     public void start(Stage stage) {
-        TableView<Member> table = new TableView<>();
+         memberTable = new TableView<>();
 
         TableColumn<Member, Long> idCol = new TableColumn<>("ID");
         idCol.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -63,13 +66,13 @@ public class Main extends Application {
         TableColumn<Member, String> emailCol = new TableColumn<>("Email");
         emailCol.setCellValueFactory(new PropertyValueFactory<>("email"));
 
-        table.getColumns().addAll(idCol, nameCol, emailCol);
+        memberTable.getColumns().addAll(idCol, nameCol, emailCol);
 
 
         //TODO ska den här till memberRepository eller spelar det ingen roll längre?
         //TODO fix and trix bruh
-        members = FXCollections.observableArrayList(memberRepository.findAll());
-        table.setItems(members);
+        members = FXCollections.observableArrayList(membershipService.getAllMembers());
+        memberTable.setItems(members);
 
         nameField = new TextField();
         nameField.setPromptText("Name");
@@ -80,12 +83,15 @@ public class Main extends Application {
         Button addButton = new Button("Add Member");
         addButton.setOnAction(e -> addButtonClicked());
 
+        Button deleteButton = new Button("Delete Member");
+        deleteButton.setOnAction(e -> deleteButtonClicked());
+
         messageLabel = new Label();
         messageLabel.setStyle("-fx-text-fill: red;");
 
 
-        VBox root = new VBox(10, table, new HBox(10,
-                nameField, emailField, addButton), messageLabel);
+        VBox root = new VBox(10, memberTable, new HBox(10,
+                nameField, emailField, addButton, deleteButton), messageLabel);
         stage.setScene(new Scene(root, 600, 400));
         stage.setTitle("Members");
         stage.show();
@@ -100,12 +106,26 @@ public class Main extends Application {
 
                 nameField.clear();
                 emailField.clear();
-                showSuccess("Member " + newMember.getName() + " email " + newMember.getEmail() + " successfully created");
+                showSuccess("Member " + newMember.getName() + " email "
+                        + newMember.getEmail() + " successfully created");
             } catch (InvalidMemberDataException e) {
                 showError(" Invalid data input for a members name");
             }catch (InvalidEmailException e) {
                 showError(" Invalid email");
             }
+        }
+        public void deleteButtonClicked (){
+        try {
+            Member selectedMember = memberTable.getSelectionModel().getSelectedItem();
+
+            membershipService.deleteMember(selectedMember);
+            members.remove(selectedMember);
+
+            showSuccess("Member " +selectedMember.getName() + " deleted");
+
+        }catch(InvalidMemberDataException e) {
+            showError("Select a member to delete");
+        }
         }
     private void showError(String message) {
         messageLabel.setStyle("-fx-text-fill: red;");

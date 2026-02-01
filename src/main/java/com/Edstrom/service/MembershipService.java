@@ -5,12 +5,18 @@ import com.Edstrom.exception.InvalidEmailException;
 import com.Edstrom.exception.InvalidMemberDataException;
 import com.Edstrom.repository.MemberRepository;
 
+import java.util.List;
+
 public class MembershipService {
 
     private final MemberRepository memberRepository;
 
     public MembershipService(MemberRepository memberRepository){
         this.memberRepository = memberRepository;
+    }
+    public List<Member> getAllMembers() {
+        List<Member> list = memberRepository.findAll();
+        return list;
     }
     public Member createMember(String name, String email) {
         if (name == null || name.isEmpty()) throw new InvalidMemberDataException(" please write a proper name");
@@ -21,7 +27,15 @@ public class MembershipService {
         memberRepository.save(newMember);
         return newMember;
     }
-
-
+    public void deleteMember(Member member) {
+        if (member == null) {
+            throw new InvalidMemberDataException("Select a member to delete");
+        }
+        memberRepository.delete(member);
+    }
 
 }
+
+
+
+
