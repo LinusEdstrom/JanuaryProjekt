@@ -1,14 +1,9 @@
 package com.Edstrom;
 
-import com.Edstrom.entity.Member;
-import com.Edstrom.entity.Rental;
-import com.Edstrom.entity.RentedObject;
+import com.Edstrom.entity.*;
 import com.Edstrom.exception.InvalidEmailException;
 import com.Edstrom.exception.InvalidMemberDataException;
-import com.Edstrom.repository.MemberRepository;
-import com.Edstrom.repository.MemberRepositoryImpl;
-import com.Edstrom.repository.RentalRepository;
-import com.Edstrom.repository.RentalRepositoryImpl;
+import com.Edstrom.repository.*;
 import com.Edstrom.service.MembershipService;
 import com.Edstrom.service.RentalService;
 import com.Edstrom.util.HibernateUtil;
@@ -24,7 +19,9 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Main extends Application {
 
@@ -33,11 +30,14 @@ public class Main extends Application {
     private RentalRepository rentalRepository;
     private MembershipService membershipService;
     private RentalService rentalService;
+    private MovieRepository movieRepository;
+    private GameRepository gameRepository;
+    private CostumeRepository costumeRepository;
     private ObservableList<Member> members;
 
     TableView<Member> memberTable;
 
-    ListView<RentedObject> objectsListView;
+    ListView<RentableItemDTO> objectsListView;
 
     TextField nameField, emailField;
     Label messageLabel;
@@ -50,6 +50,9 @@ public class Main extends Application {
         //Repos
         memberRepository = new MemberRepositoryImpl(sessionFactory);
         rentalRepository = new RentalRepositoryImpl(sessionFactory);
+        movieRepository = new MovieRepositoryImpl(sessionFactory);
+        gameRepository = new GameRepositoryImpl(sessionFactory);
+        costumeRepository = new CostumeRepositoryImpl(sessionFactory);
 
         //Service
         membershipService = new MembershipService(memberRepository);
@@ -64,7 +67,7 @@ public class Main extends Application {
 
         objectsListView = new ListView<>();
         objectsListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-
+        loadRentableItems();
 
          memberTable = new TableView<>();
 
@@ -142,17 +145,34 @@ public class Main extends Application {
         }
         }
     private void rentButtonClicked() {
+        Member selectedMember = memberTable.getSelectionModel().getSelectedItem();
+
+        List<RentableItemDTO> selectedItems =
+                objectsListView.getSelectionModel().getSelectedItems();
+
+        if (selectedMember == null) {
+            showError("Select a member for the rental");
+            return;
+        }
+        if (selectedItems == null || selectedItems.isEmpty()) {
+            showError("Select at least one object to rent");
+            return;
+        }
+        List<RentedObject> rentedObjects = selectedItems.stream()
+                .map(item -> {
+                    RentedObject ro = new RentedObject();
+                    ro.setItemId(item.getId());
+                    ro.setRentalType(item.getRentalType());
+                    ro.setPriceCharged(item.getBasePrice());
+                    ro.setRentalDate(LocalDate.now());
+                    return ro;
+                })
+                .collect(Collectors.toList());
         try {
-            Member selectedMember = memberTable.getSelectionModel().getSelectedItem();
-            List<RentedObject> selectedObjects =
-                    objectsListView.getSelectionModel().getSelectedItems();
-
-            rentalService.createRental(selectedMember, selectedObjects);
-
+            rentalService.createRental(selectedMember, rentedObjects);
             showSuccess("Rental created for " + selectedMember.getName());
-
         } catch (Exception e) {
-            showError(e.getMessage());
+            showError("Error could not create rental");
         }
     }
 
@@ -165,10 +185,46 @@ public class Main extends Application {
         messageLabel.setStyle("-fx-text-fill: green;");
         messageLabel.setText(message);
     }
+    private void loadRentableItems() {
+        List<RentableItemDTO> allItems = new ArrayList<>();
+
+        // Movies
+        movieRepository.findAll().forEach(movie ->
+                allItems.add(new RentableItemDTO(
+                        movie.getId(),
+                        movie.getTitle() + " (" + movie.getGenre() + ", " + movie.getLength() + " min)",
+                        movie.getBasePrice(),
+                        RentalType.MOVIE
+                ))
+        );
+
+        // Games
+        gameRepository.findAll().forEach(game ->
+                allItems.add(new RentableItemDTO(
+                        game.getId(),
+                        game.getName() + " — " + game.getDescription(),
+                        game.getBasePrice(),
+                        RentalType.GAME
+                ))
+        );
+
+        // Costumes
+        costumeRepository.findAll().forEach(costume ->
+                allItems.add(new RentableItemDTO(
+                        costume.getId(),
+                        costume.getDescription() + " (Size: " + costume.getSize() + ")",
+                        costume.getBasePrice(),
+                        RentalType.COSTUME
+                ))
+        );
+
+        objectsListView.setItems(FXCollections.observableArrayList(allItems));
+    }
 
 
 
     public static void main (String[]args){
             launch(args);
         }
-    }
+
+}

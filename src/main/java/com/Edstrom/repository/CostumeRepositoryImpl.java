@@ -1,9 +1,12 @@
 package com.Edstrom.repository;
 
 import com.Edstrom.entity.Costume;
+import com.Edstrom.entity.Member;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+
+import java.util.List;
 
 public class CostumeRepositoryImpl implements CostumeRepository {
 
@@ -12,6 +15,12 @@ public class CostumeRepositoryImpl implements CostumeRepository {
     public CostumeRepositoryImpl(SessionFactory sessionFactory){this.sessionFactory = sessionFactory;}
 
     @Override
+    public List<Costume> findAll() {
+        try (Session session = sessionFactory.openSession()) {
+            return session.createQuery("FROM Costume", Costume.class).list();
+        }
+    }
+
     public void save(Costume costume){
 
         try(Session session = sessionFactory.openSession()){

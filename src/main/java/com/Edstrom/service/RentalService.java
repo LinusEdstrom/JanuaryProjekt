@@ -1,6 +1,7 @@
 package com.Edstrom.service;
 
 import com.Edstrom.entity.*;
+import com.Edstrom.exception.createRentalError;
 import com.Edstrom.repository.RentalRepository;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -16,6 +17,22 @@ public class RentalService {
     public RentalService(RentalRepository rentalRepository){
         this.rentalRepository = rentalRepository;
     }
+    public void createRental(Member member, List<RentedObject> rentedObjects) {
+
+        Rental rental = new Rental();
+        rental.setMember(member);
+        rental.setRentalDate(LocalDate.now());
+
+        for (RentedObject obj : rentedObjects) {
+            obj.markAsRented(rental);
+            rental.addRentedObject(obj);
+        }
+
+        rentalRepository.save(rental);
+    }
+
+
+
 }
 
 

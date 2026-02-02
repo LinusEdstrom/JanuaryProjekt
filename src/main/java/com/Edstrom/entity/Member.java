@@ -31,6 +31,10 @@ protected Member(){}
         this.name = name;
         this.email = email;
     }
+    public void addRental(Rental rental) {
+    rentals.add(rental);
+    rental.setMember(this);
+    }
 
     public Long getId() {
         return id;

@@ -7,4 +7,6 @@ import java.util.List;
 public interface RentalRepository {
 
     List<Rental> findAll();
+
+    void save(Rental rental);
 }

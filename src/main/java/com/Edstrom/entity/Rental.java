@@ -5,33 +5,50 @@ package com.Edstrom.entity;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "rental")
-
+@Table(name = "rentals")
 public class Rental {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
-    @Column(nullable = false)
+    @OneToMany(mappedBy = "rental", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RentedObject> rentedObjects = new ArrayList<>();
+
+    @Column(name = "rental_date", nullable = false)
     private LocalDate rentalDate;
 
-    @OneToMany(mappedBy = "rental", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<RentedObject> rentedObjects;
+    @Column(name = "return_date")
+    private LocalDate returnDate;
 
-    protected Rental(){}
+    public Rental() {}
 
-    public Rental(Member member, LocalDate rentalDate){
+    public Rental (Member member, LocalDate rentalDate){
         this.member = member;
         this.rentalDate = rentalDate;
     }
+
+    public void addRentedObject(RentedObject rentedObject) {
+        rentedObjects.add(rentedObject);
+        rentedObject.setRental(this);
+    }
+        // Antar jag kör på att man returnerar allt i en rental bara
+
+    public void markAsReturned() {
+        this.returnDate = LocalDate.now();
+        for (RentedObject obj : rentedObjects) {
+            obj.markAsReturned();
+        }
+    }
+
     public Long getId() {
         return id;
     }
@@ -48,6 +65,14 @@ public class Rental {
         this.member = member;
     }
 
+    public List<RentedObject> getRentedObjects() {
+        return rentedObjects;
+    }
+
+    public void setRentedObjects(List<RentedObject> rentedObjects) {
+        this.rentedObjects = rentedObjects;
+    }
+
     public LocalDate getRentalDate() {
         return rentalDate;
     }
@@ -56,11 +81,12 @@ public class Rental {
         this.rentalDate = rentalDate;
     }
 
-    public List<RentedObject> getRentedObjects() {
-        return rentedObjects;
+    public LocalDate getReturnDate() {
+        return returnDate;
     }
 
-    public void setRentedObjects(List<RentedObject> rentedObjects) {
-        this.rentedObjects = rentedObjects;
+    public void setReturnDate(LocalDate returnDate) {
+        this.returnDate = returnDate;
     }
+
 }
