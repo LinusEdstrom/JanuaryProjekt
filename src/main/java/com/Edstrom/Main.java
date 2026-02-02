@@ -2,6 +2,7 @@ package com.Edstrom;
 
 import com.Edstrom.entity.Member;
 import com.Edstrom.entity.Rental;
+import com.Edstrom.entity.RentedObject;
 import com.Edstrom.exception.InvalidEmailException;
 import com.Edstrom.exception.InvalidMemberDataException;
 import com.Edstrom.repository.MemberRepository;
@@ -22,6 +23,9 @@ import javafx.stage.Stage;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
+import java.time.LocalDate;
+import java.util.List;
+
 public class Main extends Application {
 
     private SessionFactory sessionFactory;
@@ -32,6 +36,8 @@ public class Main extends Application {
     private ObservableList<Member> members;
 
     TableView<Member> memberTable;
+
+    ListView<RentedObject> objectsListView;
 
     TextField nameField, emailField;
     Label messageLabel;
@@ -55,6 +61,11 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) {
+
+        objectsListView = new ListView<>();
+        objectsListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
+
          memberTable = new TableView<>();
 
         TableColumn<Member, Long> idCol = new TableColumn<>("ID");
@@ -86,12 +97,15 @@ public class Main extends Application {
         Button deleteButton = new Button("Delete Member");
         deleteButton.setOnAction(e -> deleteButtonClicked());
 
+        Button rentButton = new Button("Rent selected Objects");
+        rentButton.setOnAction(e -> rentButtonClicked());
+
         messageLabel = new Label();
         messageLabel.setStyle("-fx-text-fill: red;");
 
 
-        VBox root = new VBox(10, memberTable, new HBox(10,
-                nameField, emailField, addButton, deleteButton), messageLabel);
+        VBox root = new VBox(10, memberTable, objectsListView,
+                new HBox(10, nameField, emailField, addButton, deleteButton), messageLabel);
         stage.setScene(new Scene(root, 600, 400));
         stage.setTitle("Members");
         stage.show();
@@ -127,6 +141,21 @@ public class Main extends Application {
             showError("Select a member to delete");
         }
         }
+    private void rentButtonClicked() {
+        try {
+            Member selectedMember = memberTable.getSelectionModel().getSelectedItem();
+            List<RentedObject> selectedObjects =
+                    objectsListView.getSelectionModel().getSelectedItems();
+
+            rentalService.createRental(selectedMember, selectedObjects);
+
+            showSuccess("Rental created for " + selectedMember.getName());
+
+        } catch (Exception e) {
+            showError(e.getMessage());
+        }
+    }
+
     private void showError(String message) {
         messageLabel.setStyle("-fx-text-fill: red;");
         messageLabel.setText(message);
