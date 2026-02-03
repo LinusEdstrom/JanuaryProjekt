@@ -18,6 +18,11 @@ public class RentalService {
         this.rentalRepository = rentalRepository;
     }
 
+    public List<Rental> findAllActiveRentals() {
+        return rentalRepository.findAllActiveRentals();
+    }
+
+
     public void createRental(Member member, List<RentedObject> rentedObjects) {
         Rental rental = new Rental();
         rental.setMember(member);
@@ -27,6 +32,11 @@ public class RentalService {
             rental.addRentedObject(ro);
         }
 
+        rentalRepository.save(rental);
+    }
+    public void returnRental(Rental rental) {
+        rental.setReturnDate(LocalDate.now());
+        rental.calculateTotalPrice();
         rentalRepository.save(rental);
     }
 

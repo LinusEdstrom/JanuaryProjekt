@@ -4,7 +4,9 @@ package com.Edstrom.entity;
 
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +31,10 @@ public class Rental {
     @Column(name = "return_date")
     private LocalDate returnDate;
 
+    @Column(name = "total_price", nullable = false)
+    private BigDecimal totalPrice = BigDecimal.ZERO;
+
+
 
     public Rental() {
         this.rentedObjects = new ArrayList<>();
@@ -43,14 +49,20 @@ public class Rental {
         rentedObjects.add(rentedObject);
         rentedObject.setRental(this);
     }
-        // Antar jag kör på att man returnerar allt i en rental bara
-
-    public void markAsReturned() {
-        this.returnDate = LocalDate.now();
-        for (RentedObject obj : rentedObjects) {
-            obj.markAsReturned();
+    public void calculateTotalPrice() {
+        if (rentalDate == null || returnDate == null) {
+            this.totalPrice = BigDecimal.ZERO;
+            return;
         }
+        long days = ChronoUnit.DAYS.between(rentalDate, returnDate);
+        long chargeDays = days <= 0 ? 1 : days;
+        //if(days <= 0) days = 1; else days;
+
+        this.totalPrice = rentedObjects.stream()
+                .map(ro -> ro.getPriceCharged().multiply(BigDecimal.valueOf(chargeDays)))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
+        // Antar jag kör på att man returnerar allt i en rental bara
 
     public Long getId() {
         return id;

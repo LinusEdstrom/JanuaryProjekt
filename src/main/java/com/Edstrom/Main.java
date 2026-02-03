@@ -39,6 +39,8 @@ public class Main extends Application {
 
     ListView<RentableItemDTO> objectsListView;
 
+    ListView<Rental> activeRentalsView;
+
     TextField nameField, emailField;
     Label messageLabel;
 
@@ -64,6 +66,9 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) {
+
+        activeRentalsView = new ListView<>();
+        populateActiveRentals();
 
         objectsListView = new ListView<>();
         objectsListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
@@ -103,12 +108,16 @@ public class Main extends Application {
         Button rentButton = new Button("Rent selected Objects");
         rentButton.setOnAction(e -> rentButtonClicked());
 
+        Button returnButton = new Button("Return this rental and pay");
+        returnButton.setOnAction(e->returnButtonClicked());
+
         messageLabel = new Label();
         messageLabel.setStyle("-fx-text-fill: red;");
 
 
-        VBox root = new VBox(10, memberTable, objectsListView,
-                new HBox(10, nameField, emailField, addButton, deleteButton, rentButton), messageLabel);
+        VBox root = new VBox(10, memberTable, objectsListView, activeRentalsView,
+                new HBox(10, nameField, emailField,
+                        addButton, deleteButton, rentButton, returnButton), messageLabel);
         stage.setScene(new Scene(root, 600, 400));
         stage.setTitle("Members");
         stage.show();
@@ -144,6 +153,19 @@ public class Main extends Application {
             showError("Select a member to delete");
         }
         }
+        private void returnButtonClicked() {
+        Rental selectedRental = activeRentalsView.getSelectionModel().getSelectedItem();
+
+        if(selectedRental == null) {
+            showError("Choose a rental to return");
+            return;
+        }
+        rentalService.returnRental(selectedRental);
+
+        activeRentalsView.refresh();
+
+        }
+
     private void rentButtonClicked() {
         Member selectedMember = memberTable.getSelectionModel().getSelectedItem();
 
@@ -193,12 +215,12 @@ public class Main extends Application {
         movieRepository.findAll().forEach(movie ->
                 allItems.add(new RentableItemDTO(
                         movie.getId(),
-                        "[MOVIE] " + movie.getTitle() + " (" + movie.getGenre() + ", " + movie.getLength() + " min)",
+                        "[MOVIE] " + movie.getTitle() + " (" + movie.getGenre() + "," +
+                                " " + movie.getLength() + " min)",
                         movie.getBasePrice(),
                         RentalType.MOVIE
                 ))
         );
-
         // Games
         gameRepository.findAll().forEach(game ->
                 allItems.add(new RentableItemDTO(
@@ -218,10 +240,11 @@ public class Main extends Application {
                         RentalType.COSTUME
                 ))
         );
-
         objectsListView.setItems(FXCollections.observableArrayList(allItems));
     }
-
+    private void populateActiveRentals() {
+        activeRentalsView.getItems().setAll(rentalService.findAllActiveRentals());
+    }
 
 
     public static void main (String[]args){

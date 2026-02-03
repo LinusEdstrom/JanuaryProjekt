@@ -25,6 +25,6 @@ public class RentableItemDTO {
 
     @Override
     public String toString() {
-        return displayName;
+        return displayName + " | $" + basePrice;
     }
 }

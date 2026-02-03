@@ -8,5 +8,8 @@ public interface RentalRepository {
 
     List<Rental> findAll();
 
+    List<Rental>findAllActiveRentals();
+
+
     void save(Rental rental);
 }
