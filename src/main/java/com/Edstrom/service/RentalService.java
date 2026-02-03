@@ -7,8 +7,10 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class RentalService {
 
@@ -22,7 +24,6 @@ public class RentalService {
         return rentalRepository.findAllActiveRentals();
     }
 
-
     public void createRental(Member member, List<RentedObject> rentedObjects) {
         Rental rental = new Rental();
         rental.setMember(member);
@@ -34,11 +35,25 @@ public class RentalService {
 
         rentalRepository.save(rental);
     }
-    public void returnRental(Rental rental) {
+    public BigDecimal returnRental(Rental rental) {
+
         rental.setReturnDate(LocalDate.now());
-        rental.calculateTotalPrice();
-        rentalRepository.save(rental);
+
+        BigDecimal totalPrice = rental.getRentedObjects().stream()
+                .map(RentedObject::getPriceCharged)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        rentalRepository.remove(rental);
+
+        return totalPrice;
     }
+    public List<RentableItemDTO> findAvailableItems() {
+        return rentalRepository.findAvailableItems();
+    }
+
+
+
+
 
 
 

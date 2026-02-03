@@ -103,5 +103,17 @@ public class Rental {
     public void setReturnDate(LocalDate returnDate) {
         this.returnDate = returnDate;
     }
+    @Override
+    public String toString() {
+        String memberName = (member != null)
+                ? member.getName()
+                : "Unknown member";
+
+        int numberOfItems = (rentedObjects != null)
+                ? rentedObjects.size()
+                : 0;
+
+        return memberName + " | Items rented: " + numberOfItems;
+    }
 
 }

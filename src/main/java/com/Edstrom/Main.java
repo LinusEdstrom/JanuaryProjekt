@@ -18,6 +18,8 @@ import javafx.stage.Stage;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -154,18 +156,25 @@ public class Main extends Application {
         }
         }
         private void returnButtonClicked() {
-        Rental selectedRental = activeRentalsView.getSelectionModel().getSelectedItem();
+            Rental selectedRental = activeRentalsView.getSelectionModel().getSelectedItem();
 
-        if(selectedRental == null) {
-            showError("Choose a rental to return");
-            return;
+            if (selectedRental == null) {
+                showError("Choose a rental to return");
+                return;
+            }
+            try {
+                BigDecimal totalPrice = rentalService.returnRental(selectedRental);
+
+                populateActiveRentals();
+                populateAvailableItems();
+
+                showSuccess("Rental returned for " + selectedRental.getMember().getName() +
+                        " Total to pay " + totalPrice.setScale(2, RoundingMode.HALF_UP));
+            }catch(Exception e){
+                e.printStackTrace();
+                showError("Error could not return rental");
+            }
         }
-        rentalService.returnRental(selectedRental);
-
-        activeRentalsView.refresh();
-
-        }
-
     private void rentButtonClicked() {
         Member selectedMember = memberTable.getSelectionModel().getSelectedItem();
 
@@ -193,6 +202,8 @@ public class Main extends Application {
         try {
             rentalService.createRental(selectedMember, rentedObjects);
             showSuccess("Rental created for " + selectedMember.getName());
+            populateActiveRentals();
+            populateAvailableItems();
         } catch (Exception e) {
             e.printStackTrace();
             showError("Error could not create rental");
@@ -244,6 +255,9 @@ public class Main extends Application {
     }
     private void populateActiveRentals() {
         activeRentalsView.getItems().setAll(rentalService.findAllActiveRentals());
+    }
+    private void populateAvailableItems() {
+        objectsListView.getItems().setAll(rentalService.findAvailableItems());
     }
 
 
