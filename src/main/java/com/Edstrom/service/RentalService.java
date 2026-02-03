@@ -17,15 +17,14 @@ public class RentalService {
     public RentalService(RentalRepository rentalRepository){
         this.rentalRepository = rentalRepository;
     }
-    public void createRental(Member member, List<RentedObject> rentedObjects) {
 
+    public void createRental(Member member, List<RentedObject> rentedObjects) {
         Rental rental = new Rental();
         rental.setMember(member);
         rental.setRentalDate(LocalDate.now());
 
-        for (RentedObject obj : rentedObjects) {
-            obj.markAsRented(rental);
-            rental.addRentedObject(obj);
+        for (RentedObject ro : rentedObjects) {
+            rental.addRentedObject(ro);
         }
 
         rentalRepository.save(rental);

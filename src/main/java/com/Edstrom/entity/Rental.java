@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "rentals")
+@Table(name = "rental")
 public class Rental {
 
     @Id
@@ -29,7 +29,10 @@ public class Rental {
     @Column(name = "return_date")
     private LocalDate returnDate;
 
-    public Rental() {}
+
+    public Rental() {
+        this.rentedObjects = new ArrayList<>();
+    }
 
     public Rental (Member member, LocalDate rentalDate){
         this.member = member;

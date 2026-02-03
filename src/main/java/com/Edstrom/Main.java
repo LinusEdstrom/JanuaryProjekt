@@ -108,7 +108,7 @@ public class Main extends Application {
 
 
         VBox root = new VBox(10, memberTable, objectsListView,
-                new HBox(10, nameField, emailField, addButton, deleteButton), messageLabel);
+                new HBox(10, nameField, emailField, addButton, deleteButton, rentButton), messageLabel);
         stage.setScene(new Scene(root, 600, 400));
         stage.setTitle("Members");
         stage.show();
@@ -172,6 +172,7 @@ public class Main extends Application {
             rentalService.createRental(selectedMember, rentedObjects);
             showSuccess("Rental created for " + selectedMember.getName());
         } catch (Exception e) {
+            e.printStackTrace();
             showError("Error could not create rental");
         }
     }
@@ -192,7 +193,7 @@ public class Main extends Application {
         movieRepository.findAll().forEach(movie ->
                 allItems.add(new RentableItemDTO(
                         movie.getId(),
-                        movie.getTitle() + " (" + movie.getGenre() + ", " + movie.getLength() + " min)",
+                        "[MOVIE] " + movie.getTitle() + " (" + movie.getGenre() + ", " + movie.getLength() + " min)",
                         movie.getBasePrice(),
                         RentalType.MOVIE
                 ))
@@ -202,7 +203,7 @@ public class Main extends Application {
         gameRepository.findAll().forEach(game ->
                 allItems.add(new RentableItemDTO(
                         game.getId(),
-                        game.getName() + " — " + game.getDescription(),
+                        "[GAME] " + game.getName() + " — " + game.getDescription(),
                         game.getBasePrice(),
                         RentalType.GAME
                 ))
@@ -212,7 +213,7 @@ public class Main extends Application {
         costumeRepository.findAll().forEach(costume ->
                 allItems.add(new RentableItemDTO(
                         costume.getId(),
-                        costume.getDescription() + " (Size: " + costume.getSize() + ")",
+                        "[COSTUME] " + costume.getDescription() + " (Size: " + costume.getSize() + ")",
                         costume.getBasePrice(),
                         RentalType.COSTUME
                 ))
