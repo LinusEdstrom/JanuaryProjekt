@@ -63,12 +63,7 @@ public class Main extends Application {
         //Service
         rentalService = new RentalService(rentalRepository);
         membershipService = new MembershipService(memberRepository, rentalService);
-
-
-
-
     }
-
     @Override
     public void start(Stage stage) {
 
@@ -273,8 +268,7 @@ public class Main extends Application {
         movieRepository.findAll().forEach(movie ->
                 allItems.add(new RentableItemDTO(
                         movie.getId(),
-                        "[MOVIE] " + movie.getTitle() + " (" + movie.getGenre() + "," +
-                                " " + movie.getLength() + " min)",
+                       movie.displayName(),
                         movie.getBasePrice(),
                         RentalType.MOVIE
                 ))
@@ -283,7 +277,7 @@ public class Main extends Application {
         gameRepository.findAll().forEach(game ->
                 allItems.add(new RentableItemDTO(
                         game.getId(),
-                        "[GAME] " + game.getName() + " — " + game.getDescription(),
+                        game.displayName(),
                         game.getBasePrice(),
                         RentalType.GAME
                 ))
@@ -293,7 +287,7 @@ public class Main extends Application {
         costumeRepository.findAll().forEach(costume ->
                 allItems.add(new RentableItemDTO(
                         costume.getId(),
-                        "[COSTUME] " + costume.getDescription() + " (Size: " + costume.getSize() + ")",
+                        costume.displayName(),
                         costume.getBasePrice(),
                         RentalType.COSTUME
                 ))

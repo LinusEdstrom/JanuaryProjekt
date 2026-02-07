@@ -25,6 +25,8 @@ public class RentalService {
         rental.setMember(member);
         rental.setRentalDate(LocalDate.now());
 
+        rental.setReturnDate(null);
+
         for (RentedObject ro : rentedObjects) {
             rental.addRentedObject(ro);
         }

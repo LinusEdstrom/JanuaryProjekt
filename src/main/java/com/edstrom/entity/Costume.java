@@ -22,7 +22,8 @@ public class Costume {
     private BigDecimal basePrice;
 
     // Constructors
-    protected Costume() {}
+    protected Costume() {
+    }
 
     public Costume(String description, String size, BigDecimal basePrice) {
         this.description = description;
@@ -31,18 +32,41 @@ public class Costume {
     }
 
     // Getters and Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getId() {
+        return id;
+    }
 
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public String getSize() { return size; }
-    public void setSize(String size) { this.size = size; }
+    public String getDescription() {
+        return description;
+    }
 
-    public BigDecimal getBasePrice() { return basePrice; }
-    public void setBasePrice(BigDecimal basePrice) { this.basePrice = basePrice; }
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getSize() {
+        return size;
+    }
+
+    public void setSize(String size) {
+        this.size = size;
+    }
+
+    public BigDecimal getBasePrice() {
+        return basePrice;
+    }
+
+    public void setBasePrice(BigDecimal basePrice) {
+        this.basePrice = basePrice;
+    }
+
+    public String displayName() {
+        return "[COSTUME] " + description + " (Size: " + size + ")";
+    }
 }
-
 
 
