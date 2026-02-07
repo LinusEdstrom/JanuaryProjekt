@@ -67,76 +67,7 @@ public class RentalRepositoryImpl implements RentalRepository {
             throw e;
         }
     }
-    @Override
-    public List<RentableItemDTO> findAvailableItems() {
-        try (Session session = sessionFactory.openSession()) {
 
-            List<RentableItemDTO> result = new ArrayList<>();
-
-            result.addAll(findAvailableMovies(session));
-            result.addAll(findAvailableCostumes(session));
-            result.addAll(findAvailableGames(session));
-
-            return result;
-        }
-    }
-
-    private List<RentableItemDTO> findAvailableMovies(Session session) {
-        Query<RentableItemDTO> query = session.createQuery(
-                "SELECT new com.edstrom.dto.RentableItemDTO(" +
-                        "m.id, m.title, m.basePrice, " +
-                        "cast(:type as com.edstrom.entity.RentalType)" +
-                        ") " +
-                        "FROM Movie m " +
-                        "WHERE NOT EXISTS (" +
-                        "SELECT 1 FROM RentedObject ro " +
-                        "WHERE ro.itemId = m.id " +
-                        "AND ro.rentalType = :type " +
-                        "AND ro.rental.returnDate IS NULL" +
-                        ")",
-                RentableItemDTO.class
-        );
-        query.setParameter("type", RentalType.MOVIE);
-        return query.getResultList();
-    }
-
-    private List<RentableItemDTO> findAvailableCostumes(Session session) {
-        Query<RentableItemDTO> query = session.createQuery(
-                "SELECT new com.edstrom.dto.RentableItemDTO(" +
-                        "c.id, c.description, c.basePrice, " +
-                        "cast(:type as com.edstrom.entity.RentalType)" +
-                        ") " +
-                        "FROM Costume c " +
-                        "WHERE NOT EXISTS (" +
-                        "SELECT 1 FROM RentedObject ro " +
-                        "WHERE ro.itemId = c.id " +
-                        "AND ro.rentalType = :type" +
-                        "AND ro.rental.returnDate IS NULL" +
-                        ")",
-                RentableItemDTO.class
-        );
-        query.setParameter("type", RentalType.COSTUME);
-        return query.getResultList();
-    }
-
-    private List<RentableItemDTO> findAvailableGames(Session session) {
-        Query<RentableItemDTO> query = session.createQuery(
-                "SELECT new com.edstrom.dto.RentableItemDTO(" +
-                        "g.id, g.name, g.basePrice, " +
-                        "cast(:type as com.edstrom.entity.RentalType)" +
-                        ") " +
-                        "FROM Game g " +
-                        "WHERE NOT EXISTS (" +
-                        "SELECT 1 FROM RentedObject ro " +
-                        "WHERE ro.itemId = g.id " +
-                        "AND ro.rentalType = :type" +
-                        "AND ro.rental.returnDate IS NULL" +
-                        ")",
-                RentableItemDTO.class
-        );
-        query.setParameter("type", RentalType.GAME);
-        return query.getResultList();
-    }
     public List<Rental> findByMember(Member member) {
         if (member == null || member.getId() == null) {
             return Collections.emptyList();
@@ -155,8 +86,74 @@ public class RentalRepositoryImpl implements RentalRepository {
             return Collections.emptyList();
         }
     }
+    @Override
+    public List<RentableItemDTO> findAvailableItems() {
+        try (Session session = sessionFactory.openSession()) {
+
+            List<RentableItemDTO> result = new ArrayList<>();
+
+            result.addAll(findAvailableMovies(session));
+            result.addAll(findAvailableCostumes(session));
+            result.addAll(findAvailableGames(session));
+
+            return result;
+        }
+    }
+
+    private List<RentableItemDTO> findAvailableMovies(Session session) {
+        Query<RentableItemDTO> query = session.createQuery(
+                "SELECT new com.edstrom.dto.RentableItemDTO(" +
+                        "m.id, m.title, m.basePrice, :type" +
+                        ") " +
+                        "FROM Movie m " +
+                        "WHERE NOT EXISTS (" +
+                        "SELECT 1 FROM RentedObject ro " +
+                        "WHERE ro.itemId = m.id " +
+                        "AND ro.rentalType = :type " +
+                        "AND ro.rental.returnDate IS NULL " +
+                        ")",
+                RentableItemDTO.class
+        );
+        query.setParameter("type", RentalType.MOVIE);
+        return query.getResultList();
+    }
+    private List<RentableItemDTO> findAvailableCostumes(Session session) {
+        Query<RentableItemDTO> query = session.createQuery(
+                "SELECT new com.edstrom.dto.RentableItemDTO(" +
+                        "c.id, c.description, c.basePrice, :type" +
+                        ") " +
+                        "FROM Costume c " +
+                        "WHERE NOT EXISTS (" +
+                        "SELECT 1 FROM RentedObject ro " +
+                        "WHERE ro.itemId = c.id " +
+                        "AND ro.rentalType = :type " +
+                        "AND ro.rental.returnDate IS NULL " +
+                        ")",
+                RentableItemDTO.class
+        );
+        query.setParameter("type", RentalType.COSTUME);
+        return query.getResultList();
+    }
+    private List<RentableItemDTO> findAvailableGames(Session session) {
+        Query<RentableItemDTO> query = session.createQuery(
+                "SELECT new com.edstrom.dto.RentableItemDTO(" +
+                        "g.id, g.name, g.basePrice, :type" +
+                        ") " +
+                        "FROM Game g " +
+                        "WHERE NOT EXISTS (" +
+                        "SELECT 1 FROM RentedObject ro " +
+                        "WHERE ro.itemId = g.id " +
+                        "AND ro.rentalType = :type " +
+                        "AND ro.rental.returnDate IS NULL " +
+                        ")",
+                RentableItemDTO.class
+        );
+        query.setParameter("type", RentalType.GAME);
+        return query.getResultList();
+    }
+    }
 
 
 
-}
+
 
