@@ -6,26 +6,30 @@ import java.math.BigDecimal;
 
 public class RentableItemDTO {
 
-    private Long id;
+    private long id;
     private String displayName;
     private BigDecimal basePrice;
     private RentalType rentalType;
+    
 
-    public RentableItemDTO(Long id, String displayName, BigDecimal basePrice, RentalType rentalType) {
+    public RentableItemDTO(long id, String displayName, BigDecimal basePrice, String rentalType) {
         this.id = id;
         this.displayName = displayName;
         this.basePrice = basePrice;
-        this.rentalType = rentalType;
+        this.rentalType = RentalType.valueOf(rentalType);
+
     }
 
-    public Long getId() { return id; }
+    public long getId() { return id; }
     public String getDisplayName() { return displayName; }
     public BigDecimal getBasePrice() { return basePrice; }
-    public RentalType getRentalType() { return rentalType; }
+    public RentalType getRentalType() { return rentalType;}
 
 
     @Override
     public String toString() {
-        return displayName + " | $" + basePrice;
+        return "[" + rentalType + "] " + displayName + " | $" + basePrice;
     }
+
+
 }

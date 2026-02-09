@@ -104,17 +104,21 @@ public class Rental {
     public void setReturnDate(LocalDate returnDate) {
         this.returnDate = returnDate;
     }
+
     @Override
     public String toString() {
         String memberName = (member != null)
                 ? member.getName()
                 : "Unknown member";
 
-        int numberOfItems = (rentedObjects != null)
-                ? rentedObjects.size()
-                : 0;
+        if (rentedObjects == null || rentedObjects.isEmpty()) {
+            return memberName + " | No items rented";
+        }
+        String itemNames = rentedObjects.stream()
+                .map(RentedObject::getDisplayName)
+                .collect(Collectors.joining(" | "));
 
-        return memberName + " | Items rented: " + numberOfItems;
+        return memberName + " | Items rented: " + itemNames;
     }
 
     public BigDecimal getTotalPrice() {

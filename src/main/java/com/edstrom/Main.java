@@ -9,6 +9,7 @@ import com.edstrom.service.MembershipService;
 import com.edstrom.service.RentalService;
 import com.edstrom.util.HibernateUtil;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
@@ -26,6 +27,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Main extends Application {
+
+    private final ObservableList<RentableItemDTO> availableItems =
+            FXCollections.observableArrayList();
+
+    private final ObservableList<Rental> activeRentalsList = FXCollections.observableArrayList();
+
 
     private SessionFactory sessionFactory;
     private MemberRepository memberRepository;
@@ -64,17 +71,21 @@ public class Main extends Application {
         rentalService = new RentalService(rentalRepository);
         membershipService = new MembershipService(memberRepository, rentalService);
     }
+
     @Override
     public void start(Stage stage) {
 
         activeRentalsView = new ListView<>();
+        activeRentalsView.setItems(activeRentalsList);
         populateActiveRentals();
 
         objectsListView = new ListView<>();
+        objectsListView.setItems(availableItems);
         objectsListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
         loadRentableItems();
 
-         memberTable = new TableView<>();
+        memberTable = new TableView<>();
 
         TableColumn<Member, Long> idCol = new TableColumn<>("ID");
         idCol.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -126,10 +137,14 @@ public class Main extends Application {
         rentButton.setOnAction(e -> rentButtonClicked());
 
         Button returnButton = new Button("Return this rental and pay");
-        returnButton.setOnAction(e->returnButtonClicked());
+        returnButton.setOnAction(e -> returnButtonClicked());
 
         Button historyButton = new Button("See members history");
-        historyButton.setOnAction(e-> historyButtonClicked());
+        historyButton.setOnAction(e -> historyButtonClicked());
+
+        Button exitButton = new Button("Exit");
+        exitButton.setStyle("-fx-background-color: red;");
+        exitButton.setOnAction(e -> exitButtonClicked());
 
         messageLabel = new Label();
         messageLabel.setStyle("-fx-text-fill: red;");
@@ -137,90 +152,95 @@ public class Main extends Application {
 
         VBox root = new VBox(10, memberTable, objectsListView, activeRentalsView,
                 new HBox(10, nameField, emailField,
-                        addButton, deleteButton, rentButton, returnButton, historyButton), messageLabel);
-        stage.setScene(new Scene(root, 600, 400));
-        stage.setTitle("Members");
+                        addButton, deleteButton, rentButton, returnButton, historyButton, exitButton), messageLabel);
+        stage.setScene(new Scene(root, 1400, 1000));
+        stage.setTitle(" WIGELLS MOVIE GAME & COSTUME RENTALS");
         stage.show();
     }
-    private void historyButtonClicked(){
-    Member selectedMember = memberTable.getSelectionModel().getSelectedItem();
-    if(selectedMember == null){
-        showError("Select a member for history view");
-        return;
-    }
-    try {
-        List<Rental> rentalHistory = membershipService.getRentalHistory(selectedMember);
-        rentalHistoryView.getItems().clear();
-        rentalHistoryView.setItems(FXCollections.observableArrayList(rentalHistory));
 
-        rentalHistoryView.setVisible(true);
-        rentalHistoryView.setManaged(true);
-
-
-    }catch(Exception e) {
-        e.printStackTrace();
-        showError("Could not load rental history");
-    }
-    }
-
-        public void addButtonClicked () {
-            try {
-               Member newMember = membershipService.createMember(
-                        nameField.getText(),
-                        emailField.getText()
-                );
-                members.add(newMember);
-
-                nameField.clear();
-                emailField.clear();
-                showSuccess("Member " + newMember.getName() + " email "
-                        + newMember.getEmail() + " successfully created");
-            } catch (InvalidMemberDataException e) {
-                showError(" Invalid data input for a members name");
-            }catch (InvalidEmailException e) {
-                showError(" Invalid email");
-            }
+    private void historyButtonClicked() {
+        Member selectedMember = memberTable.getSelectionModel().getSelectedItem();
+        if (selectedMember == null) {
+            showError("Select a member for history view");
+            return;
         }
-        public void deleteButtonClicked (){
+        try {
+            List<Rental> rentalHistory = membershipService.getRentalHistory(selectedMember);
+            rentalHistoryView.getItems().clear();
+            rentalHistoryView.setItems(FXCollections.observableArrayList(rentalHistory));
+
+            rentalHistoryView.setVisible(true);
+            rentalHistoryView.setManaged(true);
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            showError("Could not load rental history");
+        }
+    }
+
+    public void addButtonClicked() {
+        try {
+            Member newMember = membershipService.createMember(
+                    nameField.getText(),
+                    emailField.getText()
+            );
+            members.add(newMember);
+
+            nameField.clear();
+            emailField.clear();
+            showSuccess("Member " + newMember.getName() + " email "
+                    + newMember.getEmail() + " successfully created");
+        } catch (InvalidMemberDataException e) {
+            showError(" Invalid data input for a members name");
+        } catch (InvalidEmailException e) {
+            showError(" Invalid email");
+        }
+    }
+
+    public void deleteButtonClicked() {
         try {
             Member selectedMember = memberTable.getSelectionModel().getSelectedItem();
 
             membershipService.deleteMember(selectedMember);
             members.remove(selectedMember);
 
-            showSuccess("Member " +selectedMember.getName() + " deleted");
+            showSuccess("Member " + selectedMember.getName() + " deleted");
 
-        }catch(InvalidMemberDataException e) {
+        } catch (InvalidMemberDataException e) {
             showError("Select a member to delete");
         }
+    }
+
+    private void exitButtonClicked() {
+        Platform.exit();
+    }
+
+    private void returnButtonClicked() {
+        Rental selectedRental = activeRentalsView.getSelectionModel().getSelectedItem();
+
+        if (selectedRental == null) {
+            showError("Choose a rental to return");
+            return;
         }
-        private void returnButtonClicked() {
-            Rental selectedRental = activeRentalsView.getSelectionModel().getSelectedItem();
-
-            if (selectedRental == null) {
-                showError("Choose a rental to return");
-                return;
-            }
-            try {
-                BigDecimal totalPrice = rentalService.returnRental(selectedRental);
+        try {
+            BigDecimal totalPrice = rentalService.returnRental(selectedRental);
 
 
-                showSuccess("Rental returned for " + selectedRental.getMember().getName() +
-                        " Total to pay " + totalPrice.setScale(2, RoundingMode.HALF_UP));
+            showSuccess("Rental returned for " + selectedRental.getMember().getName() +
+                    " Total to pay " + totalPrice.setScale(2, RoundingMode.HALF_UP));
 
-                populateActiveRentals();
-                populateAvailableItems();
+            populateActiveRentals();
+            populateAvailableItems();
 
-            }catch(Exception e){
-                e.printStackTrace();
-                showError("Error could not return rental");
-            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            showError("Error could not return rental");
         }
+    }
     private void rentButtonClicked() {
         Member selectedMember = memberTable.getSelectionModel().getSelectedItem();
-
-        List<RentableItemDTO> selectedItems =
-                objectsListView.getSelectionModel().getSelectedItems();
+        List<RentableItemDTO> selectedItems = objectsListView.getSelectionModel().getSelectedItems();
 
         if (selectedMember == null) {
             showError("Select a member for the rental");
@@ -230,27 +250,38 @@ public class Main extends Application {
             showError("Select at least one object to rent");
             return;
         }
+
         List<RentedObject> rentedObjects = selectedItems.stream()
                 .map(item -> {
                     RentedObject ro = new RentedObject();
                     ro.setItemId(item.getId());
-                    ro.setRentalType(item.getRentalType());
                     ro.setPriceCharged(item.getBasePrice());
                     ro.setDisplayName(item.getDisplayName());
+                    ro.setRentalType(item.getRentalType());
                     return ro;
                 })
                 .collect(Collectors.toList());
+
         try {
             rentalService.createRental(selectedMember, rentedObjects);
+
+
+            Platform.runLater(() -> {
+                populateActiveRentals();
+                populateAvailableItems();
+                objectsListView.getSelectionModel().clearSelection();
+            });
+
+            showSuccess("Rental created for " + selectedMember.getName());
 
         } catch (Exception e) {
             e.printStackTrace();
             showError("Error could not create rental");
         }
-        showSuccess("Rental created for " + selectedMember.getName());
-        populateActiveRentals();
-        populateAvailableItems();
     }
+
+
+
 
     private void showError(String message) {
         messageLabel.setStyle("-fx-text-fill: red;");
@@ -261,8 +292,13 @@ public class Main extends Application {
         messageLabel.setStyle("-fx-text-fill: green;");
         messageLabel.setText(message);
     }
+
     private void loadRentableItems() {
-        List<RentableItemDTO> allItems = new ArrayList<>();
+        availableItems.setAll(rentalService.findAvailableItems());
+    }
+
+
+        /*List<RentableItemDTO> allItems = new ArrayList<>();
 
         // Movies
         movieRepository.findAll().forEach(movie ->
@@ -294,16 +330,24 @@ public class Main extends Application {
         );
         objectsListView.setItems(FXCollections.observableArrayList(allItems));
     }
+
+         */
+
     private void populateActiveRentals() {
-        activeRentalsView.getItems().setAll(rentalService.findAllActiveRentals());
+        List<Rental> rentals = rentalService.findAllActiveRentals();
+        Platform.runLater(() -> {
+            activeRentalsList.setAll(rentals);
+            activeRentalsView.refresh();
+        });
     }
+
     private void populateAvailableItems() {
-        objectsListView.getItems().setAll(rentalService.findAvailableItems());
+        availableItems.setAll(rentalService.findAvailableItems());
     }
 
 
-    public static void main (String[]args){
-            launch(args);
-        }
+    public static void main(String[] args) {
+        launch(args);
+    }
 
 }

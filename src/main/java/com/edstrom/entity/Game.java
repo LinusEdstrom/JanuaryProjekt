@@ -12,6 +12,10 @@ public class Game {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "rental_type", nullable = false)
+    private RentalType rentalType = RentalType.GAME;
+
     @Column(nullable = false, length = 30)
     private String name;
 

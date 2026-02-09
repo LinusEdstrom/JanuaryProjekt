@@ -12,6 +12,10 @@ public class Costume {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "rental_type", nullable = false)
+    private RentalType rentalType = RentalType.COSTUME;
+
     @Column(nullable = false, length = 100)
     private String description;
 
