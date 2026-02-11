@@ -5,14 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2c75ac18-c320-4ccc-9f74-1a73c154c40f" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/edstrom/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/edstrom/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/edstrom/dto/RentableItemDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/edstrom/dto/RentableItemDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/edstrom/entity/Costume.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/edstrom/entity/Costume.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/edstrom/entity/Game.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/edstrom/entity/Game.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/edstrom/entity/Movie.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/edstrom/entity/Movie.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/edstrom/entity/Rental.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/edstrom/entity/Rental.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/edstrom/exception/createRentalError.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/edstrom/exception/RentalErrorException.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/edstrom/repository/RentalRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/edstrom/repository/RentalRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/edstrom/repository/RentalRepositoryImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/edstrom/repository/RentalRepositoryImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/edstrom/service/MembershipService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/edstrom/service/MembershipService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/edstrom/service/RentalService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/edstrom/service/RentalService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -43,27 +43,27 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Application.Main.executor&quot;: &quot;Run&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;sundayfun&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/linus/IdeaProjects/JanuaryProjekt/pom.xml&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.Main.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "returnhistoryfix",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/linus/IdeaProjects/JanuaryProjekt/pom.xml",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -85,11 +85,23 @@
       <workItem from="1770625496617" duration="245000" />
       <workItem from="1770625754831" duration="10556000" />
       <workItem from="1770641520829" duration="3541000" />
-      <workItem from="1770645098288" duration="3684000" />
+      <workItem from="1770645098288" duration="4365000" />
+      <workItem from="1770715261720" duration="2368000" />
+      <workItem from="1770799656876" duration="13809000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <breakpoint enabled="true" type="java-exception">
+          <properties class="org.hibernate.hql.internal.ast.QuerySyntaxException" package="org.hibernate.hql.internal.ast" />
+          <option name="timeStamp" value="1" />
+        </breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

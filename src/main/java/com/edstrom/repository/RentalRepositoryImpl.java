@@ -47,32 +47,21 @@ public class RentalRepositoryImpl implements RentalRepository {
         Transaction tx = null;
         try (Session session = sessionFactory.openSession()) {
             tx = session.beginTransaction();
-            session.persist(rental);
 
-            session.flush();   // executes INSERTs immediately. Behöver för att köra direkt
-            session.clear();   // clears first-level cache. Clear cachad data
-
+            if(rental.getId() == null){
+                session.persist(rental);
+            }else {
+                session.merge(rental);
+            }
             tx.commit();
         } catch (RuntimeException e) {
             if (tx != null) tx.rollback();
             throw e;
         }
     }
-
     @Override
-    public void remove(Rental rental) {
-        Transaction tx = null;
-        try (Session session = sessionFactory.openSession()) {
-            tx = session.beginTransaction();
-            session.remove(rental);
-            tx.commit();
-        } catch (RuntimeException e) {
-            if (tx != null) tx.rollback();
-            throw e;
-        }
-    }
-
     public List<Rental> findByMember(Member member) {
+
         if (member == null || member.getId() == null) {
             return Collections.emptyList();
         }
@@ -82,14 +71,18 @@ public class RentalRepositoryImpl implements RentalRepository {
                             "SELECT r FROM Rental r " +
                                     "LEFT JOIN FETCH r.rentedObjects " +
                                     "WHERE r.member.id = :memberId " +
-                                    "ORDER BY r.rentalDate DESC, r.returnDate DESC", Rental.class)
+                                    "ORDER BY r.rentalDate DESC, r.returnDate DESC",
+                            Rental.class
+                    )
                     .setParameter("memberId", member.getId())
                     .list();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return Collections.emptyList();
+
+        } catch (RuntimeException e) {
+            throw e;
         }
     }
+
+
     @Override
     public List<RentableItemDTO> findAvailableItems() {
         try (Session session = sessionFactory.openSession()) {
@@ -106,7 +99,9 @@ public class RentalRepositoryImpl implements RentalRepository {
                                     "WHERE NOT EXISTS (" +
                                     "   SELECT 1 FROM RentedObject ro " +
                                     "   JOIN ro.rental r " +
-                                    "   WHERE ro.itemId = m.id AND r.returnDate IS NULL" +
+                                    "   WHERE ro.itemId = m.id " +
+                                    "     AND ro.rentalType = com.edstrom.entity.RentalType.MOVIE " +
+                                    "     AND r.returnDate IS NULL" +
                                     ")",
                             RentableItemDTO.class
                     ).getResultList()
@@ -122,7 +117,9 @@ public class RentalRepositoryImpl implements RentalRepository {
                                     "WHERE NOT EXISTS (" +
                                     "   SELECT 1 FROM RentedObject ro " +
                                     "   JOIN ro.rental r " +
-                                    "   WHERE ro.itemId = c.id AND r.returnDate IS NULL" +
+                                    "   WHERE ro.itemId = c.id " +
+                                    "     AND ro.rentalType = com.edstrom.entity.RentalType.COSTUME " +
+                                    "     AND r.returnDate IS NULL" +
                                     ")",
                             RentableItemDTO.class
                     ).getResultList()
@@ -138,7 +135,9 @@ public class RentalRepositoryImpl implements RentalRepository {
                                     "WHERE NOT EXISTS (" +
                                     "   SELECT 1 FROM RentedObject ro " +
                                     "   JOIN ro.rental r " +
-                                    "   WHERE ro.itemId = g.id AND r.returnDate IS NULL" +
+                                    "   WHERE ro.itemId = g.id " +
+                                    "     AND ro.rentalType = com.edstrom.entity.RentalType.GAME " +
+                                    "     AND r.returnDate IS NULL" +
                                     ")",
                             RentableItemDTO.class
                     ).getResultList()

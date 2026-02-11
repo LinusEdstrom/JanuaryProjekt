@@ -4,6 +4,7 @@ import com.edstrom.dto.RentableItemDTO;
 import com.edstrom.entity.*;
 import com.edstrom.exception.InvalidEmailException;
 import com.edstrom.exception.InvalidMemberDataException;
+import com.edstrom.exception.RentalErrorException;
 import com.edstrom.repository.*;
 import com.edstrom.service.MembershipService;
 import com.edstrom.service.RentalService;
@@ -150,9 +151,11 @@ public class Main extends Application {
         messageLabel.setStyle("-fx-text-fill: red;");
 
 
-        VBox root = new VBox(10, memberTable, objectsListView, activeRentalsView,
+        VBox root = new VBox(10, memberTable,
+        objectsListView, activeRentalsView,
                 new HBox(10, nameField, emailField,
-                        addButton, deleteButton, rentButton, returnButton, historyButton, exitButton), messageLabel);
+                        addButton, deleteButton, rentButton, returnButton,
+                        historyButton, exitButton), messageLabel, rentalHistoryView);
         stage.setScene(new Scene(root, 1400, 1000));
         stage.setTitle(" WIGELLS MOVIE GAME & COSTUME RENTALS");
         stage.show();
@@ -165,17 +168,22 @@ public class Main extends Application {
             return;
         }
         try {
-            List<Rental> rentalHistory = membershipService.getRentalHistory(selectedMember);
-            rentalHistoryView.getItems().clear();
-            rentalHistoryView.setItems(FXCollections.observableArrayList(rentalHistory));
+            List<Rental> history = rentalService.findRentalsByMember(selectedMember);
+            rentalHistoryView.getItems().setAll(history);
 
             rentalHistoryView.setVisible(true);
             rentalHistoryView.setManaged(true);
-
-
+        }catch (RentalErrorException e) {
+            showError("Error observing history " + e.getMessage());
+            rentalHistoryView.getItems().clear();
+            rentalHistoryView.setVisible(false);
+            rentalHistoryView.setManaged(false);
         } catch (Exception e) {
             e.printStackTrace();
-            showError("Could not load rental history");
+            showError("Unexpected error loading rental history");
+            rentalHistoryView.getItems().clear();
+            rentalHistoryView.setVisible(false);
+            rentalHistoryView.setManaged(false);
         }
     }
 
@@ -223,21 +231,30 @@ public class Main extends Application {
             showError("Choose a rental to return");
             return;
         }
+
         try {
             BigDecimal totalPrice = rentalService.returnRental(selectedRental);
 
+            showSuccess(
+                    "Rental returned for " + selectedRental.getMember().getName() +
+                            ". Total to pay: " + totalPrice.setScale(2, RoundingMode.HALF_UP)
+            );
 
-            showSuccess("Rental returned for " + selectedRental.getMember().getName() +
-                    " Total to pay " + totalPrice.setScale(2, RoundingMode.HALF_UP));
+            Platform.runLater(() -> {
+                populateActiveRentals();
+                populateAvailableItems();
+                populateMemberHistory(selectedRental.getMember());
+            });
 
-            populateActiveRentals();
-            populateAvailableItems();
+        } catch (RentalErrorException e) {
+            showError(e.getMessage());
 
         } catch (Exception e) {
             e.printStackTrace();
-            showError("Error could not return rental");
+            showError("Unexpected error while returning rental");
         }
     }
+
     private void rentButtonClicked() {
         Member selectedMember = memberTable.getSelectionModel().getSelectedItem();
         List<RentableItemDTO> selectedItems = objectsListView.getSelectionModel().getSelectedItems();
@@ -274,14 +291,13 @@ public class Main extends Application {
 
             showSuccess("Rental created for " + selectedMember.getName());
 
+        }catch(RentalErrorException e) {
+            showError("Error could not create rental" + e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
-            showError("Error could not create rental");
+            showError("Unexpected creating rental error");
         }
     }
-
-
-
 
     private void showError(String message) {
         messageLabel.setStyle("-fx-text-fill: red;");
@@ -297,42 +313,6 @@ public class Main extends Application {
         availableItems.setAll(rentalService.findAvailableItems());
     }
 
-
-        /*List<RentableItemDTO> allItems = new ArrayList<>();
-
-        // Movies
-        movieRepository.findAll().forEach(movie ->
-                allItems.add(new RentableItemDTO(
-                        movie.getId(),
-                       movie.displayName(),
-                        movie.getBasePrice(),
-                        RentalType.MOVIE
-                ))
-        );
-        // Games
-        gameRepository.findAll().forEach(game ->
-                allItems.add(new RentableItemDTO(
-                        game.getId(),
-                        game.displayName(),
-                        game.getBasePrice(),
-                        RentalType.GAME
-                ))
-        );
-
-        // Costumes
-        costumeRepository.findAll().forEach(costume ->
-                allItems.add(new RentableItemDTO(
-                        costume.getId(),
-                        costume.displayName(),
-                        costume.getBasePrice(),
-                        RentalType.COSTUME
-                ))
-        );
-        objectsListView.setItems(FXCollections.observableArrayList(allItems));
-    }
-
-         */
-
     private void populateActiveRentals() {
         List<Rental> rentals = rentalService.findAllActiveRentals();
         Platform.runLater(() -> {
@@ -344,7 +324,23 @@ public class Main extends Application {
     private void populateAvailableItems() {
         availableItems.setAll(rentalService.findAvailableItems());
     }
-
+    private void populateMemberHistory(Member member) {
+        if(member == null || member.getId() == null) {
+            rentalHistoryView.getItems().clear();
+            return;
+        }
+        try {
+            List<Rental> history = rentalService.findRentalsByMember(member);
+            rentalHistoryView.getItems().setAll(history);
+        }catch (RentalErrorException e) {
+            showError("Error loading members history" + e.getMessage());
+            rentalHistoryView.getItems().clear();
+        }catch (Exception e) {
+        e.printStackTrace();
+        showError("Unexpected error while loading history");
+        rentalHistoryView.getItems().clear();
+        }
+    }
 
     public static void main(String[] args) {
         launch(args);

@@ -18,5 +18,4 @@ public interface RentalRepository {
 
     void save(Rental rental);
 
-    void remove(Rental rental);
 }

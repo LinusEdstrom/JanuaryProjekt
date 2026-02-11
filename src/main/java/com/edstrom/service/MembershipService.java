@@ -18,9 +18,6 @@ public class MembershipService {
         this.rentalService = rentalService;
     }
 
-
-
-
     public List<Member> getAllMembers() {
         List<Member> list = memberRepository.findAll();
         return list;
@@ -40,9 +37,6 @@ public class MembershipService {
             throw new InvalidMemberDataException("Select a member to delete");
         }
         memberRepository.delete(member);
-    }
-    public List<Rental> getRentalHistory (Member member) {
-        return rentalService.getRentalsByMember(member);
     }
 
 }

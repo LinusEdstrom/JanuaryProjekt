@@ -35,7 +35,15 @@ public class Rental {
     @Column(name = "total_price", nullable = false)
     private BigDecimal totalPrice = BigDecimal.ZERO;
 
-
+    @Transient
+    public String getItemNames() {
+        if (rentedObjects == null || rentedObjects.isEmpty()) {
+            return "";
+        }
+        return rentedObjects.stream()
+                .map(RentedObject::getDisplayName)
+                .collect(Collectors.joining(" | "));
+    }
 
     public Rental() {
         this.rentedObjects = new ArrayList<>();
@@ -128,13 +136,4 @@ public class Rental {
     public void setTotalPrice(BigDecimal totalPrice) {
         this.totalPrice = totalPrice;
     }
-    public String getItemNames() {
-        if (rentedObjects == null || rentedObjects.isEmpty()) return "";
-
-        return rentedObjects.stream()
-                .map(RentedObject::getDisplayName) // use displayName from DTO
-                .collect(Collectors.joining(", "));
-    }
-
-
 }
