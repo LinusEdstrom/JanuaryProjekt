@@ -1,7 +1,5 @@
 package com.edstrom.service;
-
 import com.edstrom.entity.Member;
-import com.edstrom.entity.Rental;
 import com.edstrom.exception.InvalidEmailException;
 import com.edstrom.exception.InvalidMemberDataException;
 import com.edstrom.repository.MemberRepository;
@@ -11,11 +9,9 @@ import java.util.List;
 public class MembershipService {
 
     private final MemberRepository memberRepository;
-    private final RentalService rentalService;
 
-    public MembershipService(MemberRepository memberRepository, RentalService rentalService){
+    public MembershipService(MemberRepository memberRepository){
         this.memberRepository = memberRepository;
-        this.rentalService = rentalService;
     }
 
     public List<Member> getAllMembers() {

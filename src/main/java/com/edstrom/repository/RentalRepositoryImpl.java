@@ -68,7 +68,7 @@ public class RentalRepositoryImpl implements RentalRepository {
 
         try (Session session = sessionFactory.openSession()) {
             return session.createQuery(
-                            "SELECT r FROM Rental r " +
+                            "SELECT DISTINCT r FROM Rental r " +
                                     "LEFT JOIN FETCH r.rentedObjects " +
                                     "WHERE r.member.id = :memberId " +
                                     "ORDER BY r.rentalDate DESC, r.returnDate DESC",

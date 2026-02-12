@@ -70,7 +70,7 @@ public class Main extends Application {
 
         //Service
         rentalService = new RentalService(rentalRepository);
-        membershipService = new MembershipService(memberRepository, rentalService);
+        membershipService = new MembershipService(memberRepository);
     }
 
     @Override
@@ -116,11 +116,14 @@ public class Main extends Application {
         rentalHistoryView.setManaged(false);
 
         TableColumn<Rental, String> itemColumn = new TableColumn<>("Items");
+        itemColumn.setMinWidth(450);
+        itemColumn.setMaxWidth(Double.MAX_VALUE);
         TableColumn<Rental, BigDecimal> totalPriceColumn = new TableColumn<>("Total Price");
         TableColumn<Rental, LocalDate> rentalDateColumn = new TableColumn<>("Rental Date");
         TableColumn<Rental, LocalDate> returnDateColumn = new TableColumn<>("Return Date");
 
         rentalHistoryView.getColumns().addAll(itemColumn, totalPriceColumn, rentalDateColumn, returnDateColumn);
+
 
         itemColumn.setCellValueFactory(new PropertyValueFactory<>("itemNames"));
         totalPriceColumn.setCellValueFactory(new PropertyValueFactory<>("totalPrice"));
@@ -146,6 +149,10 @@ public class Main extends Application {
         Button exitButton = new Button("Exit");
         exitButton.setStyle("-fx-background-color: red;");
         exitButton.setOnAction(e -> exitButtonClicked());
+
+        Button exitHistoryButton = new Button("Exit");
+        exitHistoryButton.setStyle("-fx-background-color: red;");
+        exitHistoryButton.setOnAction(e->exitHistoryButtonClicked());
 
         messageLabel = new Label();
         messageLabel.setStyle("-fx-text-fill: red;");
@@ -222,6 +229,12 @@ public class Main extends Application {
 
     private void exitButtonClicked() {
         Platform.exit();
+    }
+
+    private void exitHistoryButtonClicked() {
+        activeRentalsView.setVisible(false);
+        activeRentalsView.setManaged(false);
+        activeRentalsView.getItems().clear();
     }
 
     private void returnButtonClicked() {

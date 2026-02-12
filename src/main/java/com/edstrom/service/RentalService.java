@@ -7,6 +7,7 @@ import com.edstrom.repository.RentalRepository;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 public class RentalService {
@@ -58,12 +59,13 @@ public class RentalService {
             if (rental.getRentedObjects() == null || rental.getRentedObjects().isEmpty()) {
                 throw new RentalErrorException("Rental contains no objects");
             }
-            rental.setReturnDate(LocalDate.now());
+            if (rental.getRentalDate() == null) {
+                throw new RentalErrorException("Rental date is missing");
+            }
+            LocalDate returnDate = LocalDate.now();
+            rental.setReturnDate(returnDate);
 
-            BigDecimal totalPrice = rental.getRentedObjects().stream()
-                    .map(RentedObject::getPriceCharged)
-                    .reduce(BigDecimal.ZERO, BigDecimal::add);
-
+            BigDecimal totalPrice = calculateTotalPrice(rental);
             rental.setTotalPrice(totalPrice);
 
             try {
@@ -73,6 +75,22 @@ public class RentalService {
             }
             return totalPrice;
         }
+    private BigDecimal calculateTotalPrice(Rental rental) {
+
+        long days = ChronoUnit.DAYS.between(
+                rental.getRentalDate(),
+                rental.getReturnDate()
+        );
+        if (days < 0) {
+            throw new RentalErrorException("Return date cannot be before rental date");
+        }
+        long chargeDays = days == 0 ? 1 : days;
+
+        return rental.getRentedObjects().stream()
+                .map(ro -> ro.getPriceCharged()
+                        .multiply(BigDecimal.valueOf(chargeDays)))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
 
         public List<RentableItemDTO> findAvailableItems () {
             return rentalRepository.findAvailableItems();

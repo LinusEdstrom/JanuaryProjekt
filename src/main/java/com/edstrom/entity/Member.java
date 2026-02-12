@@ -25,7 +25,7 @@ private Long id;
 @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
 private List<Rental> rentals;
 
-protected Member(){}
+public Member(){}
 
     public Member(String name, String email) {
         this.name = name;
