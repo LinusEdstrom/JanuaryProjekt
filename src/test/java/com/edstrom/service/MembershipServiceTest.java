@@ -101,8 +101,6 @@ class MembershipServiceTest {
 
         verify(memberRepository, times(1)).findAll();
 
-
-
     }
 
 

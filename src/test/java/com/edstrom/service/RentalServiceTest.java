@@ -1,5 +1,6 @@
 package com.edstrom.service;
 
+import com.edstrom.dto.RentableItemDTO;
 import com.edstrom.entity.Member;
 import com.edstrom.entity.Rental;
 import com.edstrom.entity.RentedObject;
@@ -10,7 +11,9 @@ import org.mockito.ArgumentCaptor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import static org.mockito.Mockito.*;
 
@@ -35,12 +38,17 @@ class RentalServiceTest {
         RentedObject object = new RentedObject();
         object.setPriceCharged(BigDecimal.valueOf(50));
 
-        rentalService.createRental(testMember, Collections.singletonList(object));
+        List<RentedObject> rentedObjects = new ArrayList<>();
+        rentedObjects.add(object);
+
+        rentalService.createRental(testMember, rentedObjects);
 
         ArgumentCaptor<Rental> rentalCaptor = ArgumentCaptor.forClass(Rental.class);
         verify(rentalRepository, times(1)).save(rentalCaptor.capture());
+        //Måste ha ArgumentCaptor för save är en void. Så man måste capture tillbakakaka
 
         Rental savedRental = rentalCaptor.getValue();
+
         assertEquals(testMember, savedRental.getMember());
         assertEquals(1, savedRental.getRentedObjects().size());
         assertEquals(LocalDate.now(), savedRental.getRentalDate());
@@ -67,12 +75,34 @@ class RentalServiceTest {
     }
 
     @Test
-    void findAvailableItems() {
+    void findAvailableItems_ShouldReturnListOf_AvailableItems() {
+        List<RentableItemDTO> rentableItems = new ArrayList<>();
+        rentableItems.add(mock(RentableItemDTO.class));
+
+        when(rentalRepository.findAvailableItems()).thenReturn(rentableItems);
+
+        List<RentableItemDTO> result = rentalService.findAvailableItems();
+
+        assertEquals(1, result.size());
+        verify(rentalRepository).findAvailableItems();
+
+    }
+    @Test
+    void findRentalsByMember_ShouldReturnRentals() {
+        Member testMember = new Member();
+        testMember.setId(5L);
+
+        List<Rental> rentals = new ArrayList<>();
+        rentals.add(new Rental());
+
+        when(rentalRepository.findByMember(testMember)).thenReturn(rentals);
+
+        List<Rental> result = rentalService.findRentalsByMember(testMember);
+
+        assertEquals(1, result.size());
+        verify(rentalRepository).findByMember(testMember);
     }
     @Test
     void findAllActiveRentals() {
-    }
-    @Test
-    void findRentalsByMember() {
     }
 }

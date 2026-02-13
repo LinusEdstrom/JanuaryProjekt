@@ -53,7 +53,7 @@ public class Main extends Application {
 
     ListView<Rental> activeRentalsView;
 
-    TextField nameField, emailField;
+    TextField nameField, emailField, searchField;
     Label messageLabel;
 
     @Override
@@ -150,9 +150,11 @@ public class Main extends Application {
         exitButton.setStyle("-fx-background-color: red;");
         exitButton.setOnAction(e -> exitButtonClicked());
 
-        Button exitHistoryButton = new Button("Exit");
-        exitHistoryButton.setStyle("-fx-background-color: red;");
-        exitHistoryButton.setOnAction(e->exitHistoryButtonClicked());
+        Button searchButton = new Button("Search member");
+        searchButton.setOnAction(e ->searchButtonClicked());
+
+        searchField = new TextField();
+        searchField.setPromptText("search member");
 
         messageLabel = new Label();
         messageLabel.setStyle("-fx-text-fill: red;");
@@ -162,11 +164,27 @@ public class Main extends Application {
         objectsListView, activeRentalsView,
                 new HBox(10, nameField, emailField,
                         addButton, deleteButton, rentButton, returnButton,
-                        historyButton, exitButton), messageLabel, rentalHistoryView);
+                        historyButton, searchField, searchButton, exitButton), messageLabel, rentalHistoryView);
         stage.setScene(new Scene(root, 1400, 1000));
         stage.setTitle(" WIGELLS MOVIE GAME & COSTUME RENTALS");
         stage.show();
     }
+    private void searchButtonClicked() {
+        String searchWord = searchField.getText();
+        try{
+           List<Member> result = membershipService.searchMembers(searchWord);
+
+           Alert alert = new Alert(Alert.AlertType.INFORMATION);
+           alert.setTitle("Members found");
+           alert.setHeaderText(null);
+           alert.setContentText(result.toString());
+           alert.showAndWait();
+
+        }catch (InvalidMemberDataException e) {
+            showError("Please search for something");
+        }
+    }
+
 
     private void historyButtonClicked() {
         Member selectedMember = memberTable.getSelectionModel().getSelectedItem();

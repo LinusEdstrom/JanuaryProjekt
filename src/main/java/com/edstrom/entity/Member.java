@@ -65,6 +65,12 @@ public Member(){}
     public void setRentals(List<Rental> rentals) {
         this.rentals = rentals;
     }
+
+    @Override
+    public String toString(){
+    return name + " | " + email;
+    }
+
 }
 
 

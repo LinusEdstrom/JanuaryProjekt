@@ -12,4 +12,6 @@ public interface MemberRepository {
     void save(Member member);
 
     void delete(Member member);
+
+    List<Member> searchMembers(String searchWord);
 }

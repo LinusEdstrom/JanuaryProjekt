@@ -6,13 +6,13 @@
   <component name="ChangeListManager">
     <list default="true" id="2c75ac18-c320-4ccc-9f74-1a73c154c40f" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/edstrom/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/edstrom/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/edstrom/entity/Member.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/edstrom/entity/Member.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/edstrom/entity/Rental.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/edstrom/entity/Rental.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/edstrom/repository/RentalRepositoryImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/edstrom/repository/RentalRepositoryImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/edstrom/repository/MemberRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/edstrom/repository/MemberRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/edstrom/repository/MemberRepositoryImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/edstrom/repository/MemberRepositoryImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/edstrom/service/MembershipService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/edstrom/service/MembershipService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/edstrom/service/RentalService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/edstrom/service/RentalService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/edstrom/service/MembershipServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/edstrom/service/MembershipServiceTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/edstrom/service/RentalServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/edstrom/service/RentalServiceTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -50,34 +50,37 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Application.Main.executor": "Run",
-    "JUnit.MembershipServiceTest.createMember_shouldSaveAndReturnMember.executor": "Run",
-    "JUnit.MembershipServiceTest.createMember_shouldThrow_InvalidMemberDataException_whenNameIs_Null.executor": "Run",
-    "JUnit.MembershipServiceTest.getAllMembers_ShouldGetAllMembers_FromRepository.executor": "Run",
-    "JUnit.RentalServiceTest.returnRental.executor": "Run",
-    "JUnit.RentalServiceTest.returnRental_OneObjectFiveDays_SavesOneTime_GetTotalPrice_SetsReturnDate.executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit5",
-    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5": "",
-    "git-widget-placeholder": "TesterEtt",
-    "ignore.virus.scanning.warn.message": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/linus/IdeaProjects/JanuaryProjekt/pom.xml",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Project",
-    "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.2",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.Main.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.MembershipServiceTest.createMember_shouldSaveAndReturnMember.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.MembershipServiceTest.createMember_shouldThrow_InvalidMemberDataException_whenNameIs_Null.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.MembershipServiceTest.getAllMembers_ShouldGetAllMembers_FromRepository.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.RentalServiceTest.createRental_WithOneObjectRented_ShouldSave_RentingMember_OneObject_RentalDateNow_ReturnDateNull.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.RentalServiceTest.findAvailableItems_ShouldReturnListOf_OnlyAvailableItems.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.RentalServiceTest.findRentalsByMember_ShouldReturnRentals.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.RentalServiceTest.returnRental.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.RentalServiceTest.returnRental_OneObjectFiveDays_SavesOneTime_GetTotalPrice_SetsReturnDate.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary&quot;: &quot;JUnit5&quot;,
+    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5&quot;: &quot;&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;TesterTwo&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/linus/IdeaProjects/JanuaryProjekt/pom.xml&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CreateTestDialog.Recents.Supers">
       <recent name="" />
@@ -86,56 +89,21 @@
       <recent name="com.edstrom.service" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.RentalServiceTest.returnRental_OneObjectFiveDays_SavesOneTime_GetTotalPrice_SetsReturnDate">
-    <configuration name="MembershipServiceTest.createMember_shouldSaveAndReturnMember" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="Application.Main">
+    <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.edstrom.Main" />
       <module name="januaryprojekt" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="com.edstrom.service.*" />
+          <option name="PATTERN" value="com.edstrom.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="com.edstrom.service" />
-      <option name="MAIN_CLASS_NAME" value="com.edstrom.service.MembershipServiceTest" />
-      <option name="METHOD_NAME" value="createMember_shouldSaveAndReturnMember" />
-      <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="MembershipServiceTest.createMember_shouldThrow_InvalidMemberDataException_whenNameIs_Null" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="januaryprojekt" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="com.edstrom.service.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="com.edstrom.service" />
-      <option name="MAIN_CLASS_NAME" value="com.edstrom.service.MembershipServiceTest" />
-      <option name="METHOD_NAME" value="createMember_shouldThrow_InvalidMemberDataException_whenNameIs_Null" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="MembershipServiceTest.getAllMembers_ShouldGetAllMembers_FromRepository" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="januaryprojekt" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="com.edstrom.service.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="com.edstrom.service" />
-      <option name="MAIN_CLASS_NAME" value="com.edstrom.service.MembershipServiceTest" />
-      <option name="METHOD_NAME" value="getAllMembers_ShouldGetAllMembers_FromRepository" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="RentalServiceTest.returnRental" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="RentalServiceTest.createRental_WithOneObjectRented_ShouldSave_RentingMember_OneObject_RentalDateNow_ReturnDateNull" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="januaryprojekt" />
       <extension name="coverage">
         <pattern>
@@ -145,7 +113,39 @@
       </extension>
       <option name="PACKAGE_NAME" value="com.edstrom.service" />
       <option name="MAIN_CLASS_NAME" value="com.edstrom.service.RentalServiceTest" />
-      <option name="METHOD_NAME" value="returnRental" />
+      <option name="METHOD_NAME" value="createRental_WithOneObjectRented_ShouldSave_RentingMember_OneObject_RentalDateNow_ReturnDateNull" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="RentalServiceTest.findAvailableItems_ShouldReturnListOf_OnlyAvailableItems" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="januaryprojekt" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.edstrom.service.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.edstrom.service" />
+      <option name="MAIN_CLASS_NAME" value="com.edstrom.service.RentalServiceTest" />
+      <option name="METHOD_NAME" value="findAvailableItems_ShouldReturnListOf_OnlyAvailableItems" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="RentalServiceTest.findRentalsByMember_ShouldReturnRentals" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="januaryprojekt" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.edstrom.service.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.edstrom.service" />
+      <option name="MAIN_CLASS_NAME" value="com.edstrom.service.RentalServiceTest" />
+      <option name="METHOD_NAME" value="findRentalsByMember_ShouldReturnRentals" />
       <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -169,11 +169,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.Main" />
         <item itemvalue="JUnit.RentalServiceTest.returnRental_OneObjectFiveDays_SavesOneTime_GetTotalPrice_SetsReturnDate" />
-        <item itemvalue="JUnit.RentalServiceTest.returnRental" />
-        <item itemvalue="JUnit.MembershipServiceTest.getAllMembers_ShouldGetAllMembers_FromRepository" />
-        <item itemvalue="JUnit.MembershipServiceTest.createMember_shouldThrow_InvalidMemberDataException_whenNameIs_Null" />
-        <item itemvalue="JUnit.MembershipServiceTest.createMember_shouldSaveAndReturnMember" />
+        <item itemvalue="JUnit.RentalServiceTest.findRentalsByMember_ShouldReturnRentals" />
+        <item itemvalue="JUnit.RentalServiceTest.findAvailableItems_ShouldReturnListOf_OnlyAvailableItems" />
+        <item itemvalue="JUnit.RentalServiceTest.createRental_WithOneObjectRented_ShouldSave_RentingMember_OneObject_RentalDateNow_ReturnDateNull" />
       </list>
     </recent_temporary>
   </component>
@@ -201,7 +201,10 @@
       <workItem from="1770645098288" duration="4365000" />
       <workItem from="1770715261720" duration="2368000" />
       <workItem from="1770799656876" duration="19385000" />
-      <workItem from="1770884803981" duration="8829000" />
+      <workItem from="1770884803981" duration="8993000" />
+      <workItem from="1770903046912" duration="3611000" />
+      <workItem from="1770974001227" duration="8343000" />
+      <workItem from="1770989723487" duration="348000" />
     </task>
     <servers />
   </component>

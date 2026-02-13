@@ -34,6 +34,12 @@ public class MembershipService {
         }
         memberRepository.delete(member);
     }
+    public List<Member> searchMembers(String searchWord) {
+        if(searchWord == null || searchWord.isEmpty()) {
+        throw new InvalidMemberDataException ("please search something");
+        }
+        return memberRepository.searchMembers(searchWord);
+    }
 
 }
 
